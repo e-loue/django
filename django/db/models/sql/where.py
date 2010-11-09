@@ -199,7 +199,7 @@ class WhereNode(tree.Node):
                         params)
         elif lookup_type in ('range', 'year'):
             return ('%s BETWEEN %%s and %%s' % field_sql, params)
-        elif lookup_type in ('month', 'day', 'week_day'):
+        elif lookup_type in ('month', 'day', 'week_day', 'hour', 'minute', 'second'):
             return ('%s = %%s' % connection.ops.date_extract_sql(lookup_type, field_sql),
                     params)
         elif lookup_type == 'isnull':

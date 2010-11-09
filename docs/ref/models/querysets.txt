@@ -1646,6 +1646,72 @@ Note this will match any record with a pub_date that falls on a Monday (day 2
 of the week), regardless of the month or year in which it occurs. Week days
 are indexed with day 1 being Sunday and day 7 being Saturday.
 
+.. fieldlookup:: hour
+
+hour
+~~~~
+
+.. versionadded:: 1.3
+
+For date/datetime fields, exact hour match.
+
+Example::
+
+    Entry.objects.filter(pub_date__hour=3)
+
+SQL equivalent::
+
+    SELECT ... WHERE EXTRACT('hour' FROM pub_date) = '3';
+
+(The exact SQL syntax varies for each database engine.)
+
+This will match every record with a pub_date that occurred between
+3:00 AM and 3:59 AM.
+
+.. fieldlookup:: minute
+
+minute
+~~~~~~
+
+.. versionadded:: 1.3
+
+For date/datetime fields, exact minute match.
+
+Example::
+
+    Entry.objects.filter(pub_date__minute=30)
+
+SQL equivalent::
+
+    SELECT ... WHERE EXTRACT('minute' FROM pub_date) = '30';
+
+(The exact SQL syntax varies for each database engine.)
+
+This will match every record with a pub_date that occurred at the 30th
+minute of any hour, such as 8:30 AM or 11:30 PM.
+
+.. fieldlookup:: second
+
+second
+~~~~~~
+
+.. versionadded:: 1.3
+
+For date/datetime fields, exact second match.
+
+Example::
+
+    Entry.objects.filter(pub_date__second=0)
+
+SQL equivalent::
+
+    SELECT ... WHERE EXTRACT('second' FROM pub_date) = '0';
+
+(The exact SQL syntax varies for each database engine.)
+
+This will match every record with a pub_date that occurred at the 0th
+second of any minute.
+
 .. fieldlookup:: isnull
 
 isnull

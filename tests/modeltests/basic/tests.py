@@ -18,7 +18,7 @@ class ModelTest(TestCase):
         a = Article(
             id=None,
             headline='Area man programs in Python',
-            pub_date=datetime(2005, 7, 28),
+            pub_date=datetime(2005, 7, 28, 9, 23, 34),
         )
 
         # Save it into the database. You have to call save() explicitly.
@@ -33,7 +33,7 @@ class ModelTest(TestCase):
 
         # Access database columns via Python attributes.
         self.assertEqual(a.headline, 'Area man programs in Python')
-        self.assertEqual(a.pub_date, datetime(2005, 7, 28, 0, 0))
+        self.assertEqual(a.pub_date, datetime(2005, 7, 28, 9, 23, 34))
 
         # Change values by changing the attributes, then calling save().
         a.headline = 'Area woman programs in Python'
@@ -50,6 +50,10 @@ class ModelTest(TestCase):
         self.assertEqual(Article.objects.get(pub_date__year=2005, pub_date__month=7), a)
         self.assertEqual(Article.objects.get(pub_date__year=2005, pub_date__month=7, pub_date__day=28), a)
         self.assertEqual(Article.objects.get(pub_date__week_day=5), a)
+        self.assertEqual(Article.objects.get(pub_date__hour=9, pub_date__minute=23), a)
+        self.assertEqual(Article.objects.get(pub_date__hour=9), a)
+        self.assertEqual(Article.objects.get(pub_date__minute=23), a)
+        self.assertEqual(Article.objects.get(pub_date__second=34), a)
 
         # The "__exact" lookup type can be omitted, as a shortcut.
         self.assertEqual(Article.objects.get(id=a.id), a)
@@ -76,6 +80,22 @@ class ModelTest(TestCase):
             Article.objects.filter(pub_date__week_day=6),
             [],
         )
+        self.assertQuerysetEqual(
+            Article.objects.filter(pub_date__hour=9),
+            ['<Article: Area woman programs in Python>'],
+        )
+        self.assertQuerysetEqual(
+            Article.objects.filter(pub_date__minute=23),
+            ['<Article: Area woman programs in Python>'],
+        )
+        self.assertQuerysetEqual(
+            Article.objects.filter(pub_date__month=7, pub_date__hour=8),
+            [],
+        )
+        self.assertQuerysetEqual(
+            Article.objects.filter(pub_date__month=7, pub_date__second=27),
+            [],
+        )
 
         # Django raises an Article.DoesNotExist exception for get() if the
         # parameters don't match any object.
@@ -99,6 +119,13 @@ class ModelTest(TestCase):
             "Article matching query does not exist.",
             Article.objects.get,
             pub_date__week_day=6,
+        )
+
+        self.assertRaisesRegexp(
+            ObjectDoesNotExist,
+            "Article matching query does not exist.",
+            Article.objects.get,
+            pub_date__second=30,
         )
 
         # Lookup by a primary key is the most common case, so Django

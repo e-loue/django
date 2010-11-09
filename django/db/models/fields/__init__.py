@@ -283,8 +283,9 @@ class Field(object):
             return value._prepare()
 
         if lookup_type in (
-                'regex', 'iregex', 'month', 'day', 'week_day', 'search',
-                'contains', 'icontains', 'iexact', 'startswith', 'istartswith',
+                'month', 'day', 'week_day', 'hour', 'minute', 'second',
+                'regex', 'iregex', 'search', 'contains', 'icontains',
+                'iexact', 'startswith', 'istartswith',
                 'endswith', 'iendswith', 'isnull'
             ):
             return value
@@ -317,7 +318,7 @@ class Field(object):
                 sql, params = value._as_sql(connection=connection)
             return QueryWrapper(('(%s)' % sql), params)
 
-        if lookup_type in ('regex', 'iregex', 'month', 'day', 'week_day', 'search'):
+        if lookup_type in ('regex', 'iregex', 'month', 'day', 'week_day', 'hour', 'minute', 'second', 'search'):
             return [value]
         elif lookup_type in ('exact', 'gt', 'gte', 'lt', 'lte'):
             return [self.get_db_prep_value(value, connection=connection, prepared=prepared)]
@@ -639,7 +640,7 @@ class DateField(Field):
     def get_prep_lookup(self, lookup_type, value):
         # For "__month", "__day", and "__week_day" lookups, convert the value
         # to an int so the database backend always sees a consistent type.
-        if lookup_type in ('month', 'day', 'week_day'):
+        if lookup_type in ('month', 'day', 'week_day', 'hour', 'minute', 'second'):
             return int(value)
         return super(DateField, self).get_prep_lookup(lookup_type, value)
 

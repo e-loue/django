@@ -22,4 +22,4 @@ class OuterB(models.Model):
 
 class Inner(models.Model):
     first = models.ForeignKey(OuterA)
-    second = models.ForeignKey(OuterB, null=True)
+    secondary = models.ForeignKey(OuterB, null=True)
